@@ -42,7 +42,7 @@ Al final debe existir un **podio** donde se clasifique **primer**, **segundo** y
 
 
  *  **Configurar Juego**\: Crear juego con jugadores, el juego debe tener los limites de kilómetros por cada pista (un jugador puede ser un conductor y un conductor debe tener un carro asociado y un carro debe estar asociado a un carril que a su vez debe estar en una pista)
- *  **Iniciar el jueg**o: iniciar con un identificado del juego, se debe tener la lista de carros en donde se pueda iterar y avanzar según la posición de la pista o carril, esto debe ser de forma aleatoria (por medio del dado).
+ *  **Iniciar el juego**: iniciar con un identificador del juego, se debe tener la lista de carros en donde se pueda iterar y avanzar según la posición de la pista o carril, esto debe ser de forma aleatoria (por medio del dado).
  *  **Asignar podio (fin del juego)**\: Se debe seleccionar primer, segundo y tercer lugar en la medida que los carros llegan a la meta (asignar al podio).
  *  **Guardar datos**\: Se debe persistir los resultados con los nombres de los conductores en la posición del podio y agregar un contador de las veces que ha ganado.
 
