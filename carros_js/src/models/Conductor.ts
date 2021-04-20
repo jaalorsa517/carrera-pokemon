@@ -1,5 +1,6 @@
 import Jugador from "@/models/Jugador";
 import Carro from "@/models/Carro";
+import random from "@/utils/random";
 
 export default class Conductor {
   private _jugador: Jugador;
@@ -25,6 +26,6 @@ export default class Conductor {
     this._position = position;
   }
   tirarDado(): number {
-    return Math.floor(Math.random() * (7 - 1)) + 1;
+    return random(7, 1);
   }
 }
