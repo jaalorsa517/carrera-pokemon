@@ -13,8 +13,12 @@ const routes: Array<RouteConfig> = [
   {
     path: "/juego",
     name: "Juego",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Juego.vue")
+    component: () => import("../views/Juego.vue")
+  },
+  {
+    path: "/podio",
+    name: "Podio",
+    component: () => import("../views/Podio.vue")
   }
 ];
 

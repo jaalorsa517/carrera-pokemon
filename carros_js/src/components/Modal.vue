@@ -38,7 +38,7 @@
 
 .modal-wrapper {
   display: table-cell;
-  vertical-align: middle;
+  vertical-align: bottom;
 }
 
 .modal-container {
@@ -59,6 +59,8 @@
 
 .modal-body {
   margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .modal-default-button {

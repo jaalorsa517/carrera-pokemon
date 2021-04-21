@@ -17,7 +17,7 @@
           img.carro(
             :src="getPokemons[index].img" 
             :alt="getPokemons[index].name"
-            :style="stylesCarro"
+            :style="stylesCarro[index]"
             ref="carro"
             )
       button(@click="showModal=true") Iniciar
@@ -44,6 +44,7 @@ export default {
     return {
       juego: undefined,
       currentJugador: 0,
+      position : 1,
       showModal:false,
       stylesCarro:[
         {"margin-left":"0"},
@@ -59,21 +60,52 @@ export default {
     getConductores: function() {
       return this.juego.conductores
     },
+    getConductor: function() {
+      return this.getConductores[this.currentJugador]
+    },
     getJugador: function() {
-      return this.getConductores[this.currentJugador].jugador
+      return this.getConductor.jugador
     },
     getCarro: function() {
-      return this.getConductores[this.currentJugador].carro
+      return this.getConductor.carro
+    },
+    getAvance: function() {
+      return (this.getCarro.distancia * 100) / (this.getCarro.carril.longitud*1000)
+    },
+    msgLog: function() {
+      return `Jugador ${this.getJugador.nombre} avanzó al kilómetro ${this.getCarro.distancia/1000}`
     }
   },
   methods:{
     onThrow: function(){
-      this.getCarro.avanzar(this.getConductores[this.currentJugador].tirarDado() * 100)
+      if(this.getConductor.position !== 0){
+        this.getCarro.avanzar(this.getConductor.tirarDado() * 100)
+        this.newP()
+
+        if(this.getCarro.distancia/1000 > this.getCarro.carril.longitud | this.getAvance > this.getCarro.carril.longitud * 1000){
+          this.stylesCarro[this.currentJugador]["margin-left"] = `90%`
+          if(this.position <=5){
+            this.getConductor.position = this.position
+            this.position ++
+          }
+        }
+        else{
+          this.stylesCarro[this.currentJugador]["margin-left"] = `${this.getAvance}%`
+        }
+      }
+
+      if (this.currentJugador < this.getConductores.length-1 ){
+        this.currentJugador++
+      }
+      else{
+        this.currentJugador = 0
+      }
+    },
+    newP:function() {
+      //Crear un nuevo parrafo y se agrega al final del log
       let log = document.createElement("p")
-      log.appendChild(document.createTextNode(`Jugador ${this.getJugador.nombre} avanzó al kilómetro ${this.getCarro.distancia/1000}`))
+      log.appendChild(document.createTextNode(this.msgLog))
       this.$refs.log.appendChild(log)
-      this.stylesCarro[this.currentJugador]["margin-left"] = `${this.getCarro.distancia * 100 / this.getCarro.carril}`
-      this.currentJugador < this.getConductores.length-1 ? this.currentJugador++ : this.currentJugador = 0
     }
   },
   created: function() {
@@ -139,8 +171,8 @@ export default {
     display flex
     background-color green
   .carro
-    width 10%
-    height 10%
+    width  50px
+    height 50px
 
   .info-container
     width  95vw
