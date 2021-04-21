@@ -4,17 +4,21 @@ import getPokemons from "@/services/Pokemon";
 
 Vue.use(Vuex);
 
+let juego: any = undefined;
+
 export default new Vuex.Store({
   state: {
     maxPlayers: 5,
     players: [],
     track: "",
-    pokemons: []
+    pokemons: [],
+    juego: juego
   },
   getters: {
     getMaxPlayers: state => state.maxPlayers,
     getPlayers: state => state.players,
-    getTrack: state => state.track
+    getTrack: state => state.track,
+    getJuego: state => state.juego
   },
   mutations: {
     setPlayers(state, payload) {
@@ -25,6 +29,9 @@ export default new Vuex.Store({
     },
     setPokemons(state, payload) {
       state.pokemons = payload;
+    },
+    setJuego(state, payload) {
+      state.juego = payload;
     }
   },
   actions: {

@@ -16,6 +16,10 @@ export default class Carro {
     return this._distancia;
   }
   avanzar(metros: number) {
-    this._distancia += metros;
+    if (this._carril.longitud * 1000 > this._distancia + metros) {
+      this._distancia += metros;
+    } else {
+      this._distancia = this._carril.longitud * 1000;
+    }
   }
 }

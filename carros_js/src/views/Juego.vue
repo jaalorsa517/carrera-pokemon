@@ -1,12 +1,5 @@
 <template lang="pug">
   section.juego
-    modal(
-      v-show="showModal"
-      @close="showModal = false"
-      @throw="onThrow"
-    )
-      template(v-slot:header)
-        h3 Jugador {{getJugador.nombre}}
     h1 Carreras de autos
     .juego-container
       .pista
@@ -20,12 +13,12 @@
             :style="stylesCarro[index]"
             ref="carro"
             )
-      button(@click="showModal=true") Iniciar
+      button(@click="onThrow") Jugar
     h2 Registros
     .info-container(ref="log")
 </template>
 
-<script lang="js">
+<script>
 import getNumberRandom from "@/utils/random";
 import Juego from "@/models/Juego";
 import Pista from "@/models/Pista";
@@ -33,79 +26,100 @@ import Carro from "@/models/Carro";
 import Conductor from "@/models/Conductor";
 import Jugador from "@/models/Jugador";
 import Carril from "@/models/Carril";
-import modal from "@/components/Modal.vue"
-
 
 export default {
-  components:{
-    modal
-  },
   data: function() {
     return {
       juego: undefined,
       currentJugador: 0,
-      position : 1,
-      showModal:false,
-      stylesCarro:[
-        {"margin-left":"0"},
-        {"margin-left":"0"},
-        {"margin-left":"0"},
-        {"margin-left":"0"},
-        {"margin-left":"0"},
+      position: 1,
+      resultDado: 0,
+      showModal: false,
+      stylesCarro: [
+        { "margin-left": "0" },
+        { "margin-left": "0" },
+        { "margin-left": "0" },
+        { "margin-left": "0" },
+        { "margin-left": "0" }
       ]
     };
   },
   computed: {
-    getPokemons: function() { return this.$store.state.pokemons},
+    getPokemons: function() {
+      return this.$store.state.pokemons;
+    },
     getConductores: function() {
-      return this.juego.conductores
+      return this.juego.conductores;
     },
     getConductor: function() {
-      return this.getConductores[this.currentJugador]
+      return this.getConductores[this.currentJugador];
     },
     getJugador: function() {
-      return this.getConductor.jugador
+      return this.getConductor.jugador;
     },
     getCarro: function() {
-      return this.getConductor.carro
+      return this.getConductor.carro;
     },
     getAvance: function() {
-      return (this.getCarro.distancia * 100) / (this.getCarro.carril.longitud*1000)
+      return (
+        (this.getCarro.distancia * 100) / (this.getCarro.carril.longitud * 1000)
+      );
     },
     msgLog: function() {
-      return `Jugador ${this.getJugador.nombre} avanzó al kilómetro ${this.getCarro.distancia/1000}`
+      if (this.getConductor.position === 0) {
+        return `Jugador ${this.getJugador.nombre} avanzó ${this.resultDado} metros`;
+      } else {
+        return `Jugador ${this.getJugador.nombre} terminó la carrera`;
+      }
     }
   },
-  methods:{
-    onThrow: function(){
-      if(this.getConductor.position !== 0){
-        this.getCarro.avanzar(this.getConductor.tirarDado() * 100)
-        this.newP()
+  watch: {
+    position: function(newValue) {
+      if (newValue > 5) {
+        this.$store.commit("setJuego", this.juego);
+        this.$router.push({ name: "Podio" });
+      }
+    }
+  },
+  methods: {
+    onThrow: function() {
+      if (this.getConductor.position === 0) {
+        this.resultDado = this.getConductor.tirarDado() * 100;
+        this.getCarro.avanzar(this.resultDado);
+        this.newP();
 
-        if(this.getCarro.distancia/1000 > this.getCarro.carril.longitud | this.getAvance > this.getCarro.carril.longitud * 1000){
-          this.stylesCarro[this.currentJugador]["margin-left"] = `90%`
-          if(this.position <=5){
-            this.getConductor.position = this.position
-            this.position ++
+        if (
+          (this.getCarro.distancia / 1000 >= this.getCarro.carril.longitud) |
+          (this.getAvance + this.getCarro.distancia >=
+            this.getCarro.carril.longitud * 1000)
+        ) {
+          this.stylesCarro[this.currentJugador]["margin-left"] = `90%`;
+
+          if (this.position <= 5) {
+            this.getConductor.position = this.position;
+            this.position++;
           }
+        } else {
+          this.stylesCarro[this.currentJugador][
+            "margin-left"
+          ] = `${this.getAvance}%`;
         }
-        else{
-          this.stylesCarro[this.currentJugador]["margin-left"] = `${this.getAvance}%`
-        }
+      } else {
+        this.newP();
       }
 
-      if (this.currentJugador < this.getConductores.length-1 ){
-        this.currentJugador++
-      }
-      else{
-        this.currentJugador = 0
+      if (this.currentJugador < this.getConductores.length - 1) {
+        this.currentJugador++;
+      } else {
+        this.currentJugador = 0;
       }
     },
-    newP:function() {
+    newP: function() {
       //Crear un nuevo parrafo y se agrega al final del log
-      let log = document.createElement("p")
-      log.appendChild(document.createTextNode(this.msgLog))
-      this.$refs.log.appendChild(log)
+      let log = document.createElement("p");
+      log.appendChild(document.createTextNode(this.msgLog));
+      this.$refs.log.insertAdjacentElement("afterbegin", log);
+      // this.$refs.log.appendChild(log);
     }
   },
   created: function() {
@@ -113,11 +127,11 @@ export default {
 
     const players = this.$store.state.players;
     let jugadores = [];
-    for (let i= 0; i < players.length; i++) {
+    for (let i = 0; i < players.length; i++) {
       jugadores.push(new Jugador(i, players[i].name, "humano"));
     }
     //Crear jugadores maquina
-    for (let i = jugadores.length ; i < 5; i++) {
+    for (let i = jugadores.length; i < 5; i++) {
       jugadores.push(new Jugador(i, this.getPokemons[i].name, "maquina"));
     }
 
@@ -142,6 +156,7 @@ export default {
 
     for (let i = 0; i < jugadores.length; i++) {
       let carril = new Carril(pistas[0].limite);
+      pistas[0].addCarril(carril);
       let carro = new Carro(carril);
       conductores.push(new Conductor(jugadores[i], carro));
     }
@@ -151,7 +166,7 @@ export default {
     juego.pistas = pistas;
     juego.conductores = conductores;
     this.juego = juego;
-  },
+  }
 };
 </script>
 
