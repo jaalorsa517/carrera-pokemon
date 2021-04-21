@@ -8,7 +8,13 @@ export default class Carro {
     this._carril = carril;
     this._distancia = 0;
   }
+  get carril() {
+    return this._carril;
+  }
 
+  get distancia() {
+    return this._distancia;
+  }
   avanzar(metros: number) {
     this._distancia += metros;
   }

@@ -15,6 +15,13 @@ section.Home
     .names-players(v-for="player in players")
       label(for="nombre") Nombre
       input(v-model="player.name" name="nombre")
+
+    .track
+      label() Pista
+      v-select(
+        :options="optionsSelect"
+        v-model="track"
+      )
     input(
       type="submit" 
       value="Iniciar"
@@ -24,6 +31,10 @@ section.Home
 
 <script lang="ts">
 import Vue from "vue";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+
+Vue.component("v-select", vSelect);
 
 export default Vue.extend({
   name: "Home",
@@ -31,15 +42,14 @@ export default Vue.extend({
   data: function() {
     return {
       numPlayers: 1,
+      track: "",
+      optionsSelect: ["Corta: 1Km", "Larga: 10Km"],
       players: [{ name: "" }]
     };
   },
   computed: {
     maxPlayer: function() {
       return this.$store.getters.getMaxPlayers;
-    },
-    getArrayPlayers: function() {
-      return new Array(this.numPlayers);
     }
   },
   watch: {
@@ -53,9 +63,23 @@ export default Vue.extend({
   },
   methods: {
     onClick: function() {
-      if (!this.players.some(value => value.name === ""))
-        this.$router.replace({ name: "Juego" });
+      if (!this.players.some(value => value.name === "") && this.track !== "") {
+        this.$store.commit("setPlayers", this.players);
+        this.$store.commit(
+          "setTrack",
+          this.track.substring(0, this.track.indexOf(":"))
+        );
+        this.$router.push({ name: "Juego" });
+      }
     }
+  },
+  beforeMount: function() {
+    this.$store.dispatch("actionPokemons");
   }
 });
 </script>
+
+<style lang="stylus">
+.track
+  display flex
+</style>
