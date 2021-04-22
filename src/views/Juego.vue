@@ -13,7 +13,7 @@
             :style="stylesCarro[index]"
             ref="carro"
             )
-      button(@click="onThrow") Jugar
+      button(@click="onThrow") Lanzar Dado
     h2 Registros
     .info-container(ref="log")
 </template>
