@@ -77,11 +77,14 @@ export default {
     position: function(newValue) {
       if (newValue > 5) {
         this.$store.commit("setJuego", this.juego);
-        this.$router.push({ name: "Podio" });
+        this.$router.replace({ name: "Podio" });
       }
     }
   },
   methods: {
+    /**
+     * Método que se encarga del movimiento de los carros
+     */
     onThrow: function() {
       if (this.getConductor.position === 0) {
         this.resultDado = this.getConductor.tirarDado() * 100;
@@ -122,17 +125,22 @@ export default {
       // this.$refs.log.appendChild(log);
     }
   },
+  /**
+   * Hook que inicializa todo el juego. Acá se instancia todas las clases de los modelos
+   */
   created: function() {
     //Crear jugadores humanos
 
     const players = this.$store.state.players;
     let jugadores = [];
     for (let i = 0; i < players.length; i++) {
-      jugadores.push(new Jugador(i, players[i].name, "humano"));
+      jugadores.push(new Jugador(i, players[i].name.toUpperCase(), "humano"));
     }
     //Crear jugadores maquina
     for (let i = jugadores.length; i < 5; i++) {
-      jugadores.push(new Jugador(i, this.getPokemons[i].name, "maquina"));
+      jugadores.push(
+        new Jugador(i, this.getPokemons[i].name.toUpperCase(), "maquina")
+      );
     }
 
     //Pistas

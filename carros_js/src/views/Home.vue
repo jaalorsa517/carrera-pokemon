@@ -2,8 +2,9 @@
 section.Home
   h1 Carrera Pokemon
   p Bienvenido a este juego donde competiran pokemon por el primer lugar de la carrera
+  .msg(v-show="msg !== ''") {{msg}}
   form
-    .numbers-players
+    .numbers-players.containers
       label(for="name") ¿Cuántos jugadores son?
       input(
         type="number" 
@@ -12,17 +13,17 @@ section.Home
         :max="maxPlayer"
         v-model="numPlayers"
         )
-    .names-players(v-for="player in players")
+    .names-players.containers(v-for="player in players")
       label(for="nombre") Nombre
       input(v-model="player.name" name="nombre")
 
-    .track
+    .track.containers
       label() Pista
       v-select(
         :options="optionsSelect"
         v-model="track"
       )
-    input(
+    input.submit(
       type="submit" 
       value="Iniciar"
       @click.prevent="onClick"
@@ -44,7 +45,8 @@ export default Vue.extend({
       numPlayers: 1,
       track: "",
       optionsSelect: ["Corta: 1Km", "Larga: 10Km"],
-      players: [{ name: "" }]
+      players: [{ name: "" }],
+      msg:""
     };
   },
   computed: {
@@ -69,7 +71,11 @@ export default Vue.extend({
           "setTrack",
           this.track.substring(0, this.track.indexOf(":"))
         );
-        this.$router.push({ name: "Juego" });
+        this.$router.replace({ name: "Juego" });
+      }
+      else{
+        this.msg="No pueden haber campos vacíos."
+        setTimeout(()=>this.msg="",2000)
       }
     }
   },
@@ -80,6 +86,29 @@ export default Vue.extend({
 </script>
 
 <style lang="stylus">
-.track
+.Home
   display flex
+  flex-direction column
+  align-items center
+  p
+    font-size 1.3rem
+  
+  .msg
+    width 100%
+    margin-bottom 10px
+    padding 10px
+    background-color #46df7e70
+
+  label
+    margin-right 10px
+
+  .containers
+    margin-bottom 15px
+  
+  .track
+    display flex
+    width 200px
+
+  .submit
+    font-size 1.3rem
 </style>
